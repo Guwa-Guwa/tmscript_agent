@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #111827;
+  background: #ffffff;
+  font-family:
+    'Noto Sans TC',
+    'PingFang TC',
+    'Microsoft JhengHei',
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 1024px;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+@layer utilities {
+  .scrollbar-soft {
+    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-soft::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .scrollbar-soft::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-soft::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+
+  .scrollbar-soft:hover::-webkit-scrollbar-thumb {
+    background-color: #94a3b8;
+  }
+}
