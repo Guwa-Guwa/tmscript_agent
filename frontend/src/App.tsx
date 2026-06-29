@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import AppLayout from './components/AppLayout';
 import type { ChatMessage, Conversation, Language, ValidationStatus } from './types';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
+
 const initialConversations: Conversation[] = [];
 
 interface ChatState {
@@ -70,15 +72,33 @@ function App() {
     ? (chatStates[activeConversation.id] ?? emptyChatState)
     : emptyChatState;
 
-  const handleCreateConversation = () => {
+  interface CreateSessionResponse {
+    session_id: string;
+    title: string;
+    created_at: string;
+    updated_at: string;
+  }
+  
+  const handleCreateConversation = async () => {
+    const response = await fetch(`${API_BASE_URL}/api/sessions`, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error(await readApiErrorMessage(response));
+    }
+
+    const data: CreateSessionResponse = await response.json();
+
     const conversation: Conversation = {
-      id: `conversation-${Date.now()}`,
-      title: copy.conversationDefaultTitle,
+      id: data.session_id,
+      title: data.title,
       updatedAt: copy.justNow,
       icon: 'check',
     };
-
+    // add the new conversation to the top of the list
     setConversations((currentConversations) => [conversation, ...currentConversations]);
+    // create a new chat state for the new conversation
     setChatStates((currentChatStates) => ({
       ...currentChatStates,
       [conversation.id]: { messages: [], draft: '', scriptCode: defaultScriptCode },
@@ -159,7 +179,7 @@ function App() {
     }));
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -301,7 +321,7 @@ function App() {
         formData.append('language', language);
 
         try {
-          const response = await fetch('http://localhost:8000/api/voice/transcribe', {
+          const response = await fetch(`${API_BASE_URL}/api/voice/transcribe`, {
             method: 'POST',
             body: formData,
           });

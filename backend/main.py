@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 
 import anyio
+from backend.db.init_db import init_db
+from backend.routers.sessions import router as sessions_router
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,6 +12,9 @@ from backend.schemas import ChatRequest, ChatResponse, VoiceTranscriptionRespons
 from backend.voice import transcribe_audio_bytes
 
 app = FastAPI()
+init_db()
+app.include_router(sessions_router, prefix="/api")
+
 logger = logging.getLogger(__name__)
 
 app.add_middleware(
